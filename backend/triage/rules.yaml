@@ -1,0 +1,9 @@
+red_flags:
+  - when: ["chest_pain", "shortness_of_breath"]
+  - when: ["heavy_bleeding"]
+  - when: ["loss_of_consciousness"]
+urgent:
+  - when: ["high_fever", "infant"]
+  - when: ["severe_dehydration"]
+self_care:
+  - when: ["mild_cough", "no_fever", "normal_vitals"]
