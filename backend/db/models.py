@@ -38,6 +38,12 @@ class Encounter(Base):
     risk_score: Mapped[float | None] = mapped_column(Float, nullable=True)
     triage: Mapped[str] = mapped_column(String(16))           # final decision
     guidance: Mapped[str] = mapped_column(Text)
+    reason: Mapped[str] = mapped_column(Text, default="")
+    signals: Mapped[str] = mapped_column(Text, default="")    # comma-separated symptom signals
+    duration_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sender: Mapped[str | None] = mapped_column(String(32), nullable=True, index=True)  # SMS "From" number
+    thread_id: Mapped[int | None] = mapped_column(Integer, nullable=True)  # first encounter of a conversation
+    status: Mapped[str] = mapped_column(String(16), default="open")  # open / acknowledged / resolved
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),
                                                  default=lambda: datetime.now(timezone.utc))
 
@@ -54,6 +60,12 @@ class Encounter(Base):
             "risk_score": self.risk_score,
             "triage": self.triage,
             "guidance": self.guidance,
+            "reason": self.reason,
+            "signals": [s for s in self.signals.split(",") if s],
+            "duration_days": self.duration_days,
+            "sender": self.sender,
+            "thread_id": self.thread_id,
+            "status": self.status,
             "created_at": created.isoformat(),
         }
 

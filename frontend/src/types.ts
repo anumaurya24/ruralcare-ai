@@ -1,4 +1,5 @@
 export type Triage = "EMERGENCY" | "URGENT" | "ROUTINE";
+export type CaseStatus = "open" | "acknowledged" | "resolved";
 
 export interface Encounter {
   id: number;
@@ -9,11 +10,22 @@ export interface Encounter {
   risk_score: number | null;
   triage: Triage;
   guidance: string;
+  reason: string;
+  signals: string[];
+  duration_days: number | null;
+  sender: string | null;
+  thread_id: number | null;
+  status: CaseStatus;
   created_at: string;
 }
 
-export interface TriageResult {
-  id: number;
+/** Result of POST /triage/explain (a preview; nothing is saved). */
+export interface Assessment {
+  rule: Triage;
   triage: Triage;
-  guidance: string;
+  risk_score: number | null;
+  reason: string;
+  signals: string[];
+  negated: string[];
+  duration_days: number | null;
 }

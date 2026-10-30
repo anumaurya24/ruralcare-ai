@@ -1,17 +1,25 @@
-# Demo script (about 3 minutes)
+# Demo script (about 4 minutes)
 
 1. Start the API (`uvicorn backend.main:app --port 8000`) and the dashboard (`cd frontend && npm run dev`).
-   Open http://localhost:5173. The feed status should read **LIVE**.
-2. In **Patient message**, send `mild cough since yesterday`. Result: **Routine** with home-care guidance.
-3. Send `fever and trouble catching my breath`. No rule matches, but the risk score passes 0.6, so the
-   result is **Urgent**.
-4. Send `chest pain and shortness of breath`. A red-flag rule fires and the result is **Emergency**.
-5. Simulate a real text from another terminal and watch it appear in the feed without refreshing:
+   Open http://localhost:5173. The top bar shows **Live**.
+2. Go to **Messages**. Type `no fever but I fainted` and watch the preview: **Emergency**,
+   "Red flag: loss of consciousness", and "Ruled out: fever". Click **Triage message**.
+3. Type `fever and vomiting for 4 days`. No rule fires, but the risk score reaches 0.7, so it is **Urgent**.
+4. Simulate real texts from another terminal and watch them arrive on the **Dashboard** with a short highlight:
 
    ```bash
-   curl -X POST http://localhost:8000/twilio/webhook -d "Body=my infant has a high fever"
+   curl -X POST http://localhost:8000/twilio/webhook --data-urlencode "Body=my baby is vomiting" --data-urlencode "From=+15550001111"
+   curl -X POST http://localhost:8000/twilio/webhook --data-urlencode "Body=and diarrhea too" --data-urlencode "From=+15550001111"
+   curl -X POST http://localhost:8000/twilio/webhook --data-urlencode "Body=chest pain and I can barely catch my breath" --data-urlencode "From=+15552223333"
    ```
 
-   The response is TwiML, the format Twilio uses to text the guidance back.
-6. Click **Emergency** in the filter bar to show only emergencies.
-7. Stop and restart the API. The feed shows **OFFLINE**, then reconnects by itself.
+   The second text joins the first conversation and escalates it to **Urgent**. The third raises the
+   emergency alert, the sidebar badge, and the browser tab count. Each response is TwiML, the format
+   Twilio uses to text the reply back.
+5. Click the follow-up row to open the drawer: reason, symptoms recognized, the whole conversation,
+   and the reply that was sent. Click **Resolve**.
+6. Open the dashboard in a second browser window and click **Acknowledge** on the alert in one window.
+   The other window updates instantly.
+7. Visit **Analytics** for triage levels, case status, and the most reported symptoms, and
+   **Settings** to switch to dark mode.
+8. Stop and restart the API. The status shows **Offline**, then reconnects by itself.

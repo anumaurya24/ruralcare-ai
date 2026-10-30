@@ -23,11 +23,11 @@ origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH"],
     allow_headers=["*"],
 )
 
-# Endpoints: /healthz, /twilio/..., /encounters, /ws/encounters
+# Endpoints: /healthz, /twilio/..., /encounters, /stats, /triage/explain, /ws/encounters
 app.include_router(health_router)
 app.include_router(twilio_router)
 app.include_router(encounters_router)

@@ -1,9 +1,59 @@
+# Phrases that map free text to symptom signals. Matching ignores case and apostrophes
+# ("can't" -> "cant"); a signal is ignored when a negation ("no", "not", "denies", "without")
+# comes shortly before it in the same clause.
+signals:
+  chest_pain: [chest pain, chest hurts, chest feels tight, chest tightness, tight chest, chest pressure, pain in my chest]
+  shortness_of_breath: [shortness of breath, short of breath, trouble breathing, difficulty breathing,
+                        hard to breathe, breathless, out of breath, catching my breath, catch my breath,
+                        barely breathe, breathing hard, wheezing]
+  cannot_breathe: [cant breathe, cannot breathe, unable to breathe, choking]
+  heavy_bleeding: [heavy bleeding, bleeding heavily, wont stop bleeding, bleeding a lot, lots of blood]
+  bleeding: [bleeding, blood]
+  loss_of_consciousness: [loss of consciousness, passed out, fainted, unconscious, unresponsive, blacked out]
+  stroke_signs: [face drooping, slurred speech, one side weak, cant move one side, sudden numbness]
+  seizure: [seizure, convulsing, convulsions]
+  self_harm: [kill myself, suicide, suicidal, end my life, hurt myself, self harm]
+  stiff_neck: [stiff neck]
+  high_fever: [high fever, very high fever, burning up]
+  fever: [fever, feverish, chills]
+  infant: [infant, baby, newborn, month old]
+  pregnant: [pregnant, pregnancy]
+  severe_dehydration: [severe dehydration, cant keep water down, cant keep fluids down, sunken eyes, no urine]
+  vomiting: [vomiting, throwing up, vomit]
+  diarrhea: [diarrhea, loose stools]
+  abdominal_pain: [stomach pain, abdominal pain, belly pain, stomach ache]
+  rash: [rash, spots]
+  cough: [cough, coughing]
+
+# Checked in order: any red flag -> EMERGENCY, else any urgent rule -> URGENT.
+# A rule fires when every signal in "when" is present.
 red_flags:
-  - when: ["chest_pain", "shortness_of_breath"]
-  - when: ["heavy_bleeding"]
-  - when: ["loss_of_consciousness"]
+  - when: [chest_pain, shortness_of_breath]
+  - when: [cannot_breathe]
+  - when: [heavy_bleeding]
+  - when: [loss_of_consciousness]
+  - when: [stroke_signs]
+  - when: [seizure]
+  - when: [self_harm]
+  - when: [fever, stiff_neck]
+  - when: [pregnant, bleeding]
 urgent:
-  - when: ["high_fever", "infant"]
-  - when: ["severe_dehydration"]
-self_care:
-  - when: ["mild_cough", "no_fever", "normal_vitals"]
+  - when: [high_fever, infant]
+  - when: [severe_dehydration]
+  - when: [vomiting, diarrhea, infant]
+  - when: [shortness_of_breath]
+  - when: [chest_pain]
+  - when: [high_fever, rash]
+
+# Used only when no rule fires; a total of 0.6 or more makes the message URGENT.
+risk_weights:
+  base: 0.1
+  fever: 0.2
+  high_fever: 0.2
+  cough: 0.1
+  vomiting: 0.2
+  diarrhea: 0.1
+  abdominal_pain: 0.2
+  rash: 0.1
+  infant: 0.2
+  long_duration: 0.2   # symptoms for 3+ days
